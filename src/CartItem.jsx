@@ -9,27 +9,36 @@ const CartItem = ({ onContinueShopping }) => {
 
   // Calculate total amount for all products in the cart
   const calculateTotalAmount = () => {
- 
+
+    return cart.reduce((sum, item) => {
+      const unit = parseFloat(String(item.cost).replace(/[^0-9.]/g, '')) || 0;
+      return sum + unit * (item.quantity || 0);
+    }, 0).toFixed(2);
   };
 
   const handleContinueShopping = (e) => {
-   
+    e.preventDefault();
+    if (onContinueShopping) onContinueShopping(e);
   };
 
 
 
   const handleIncrement = (item) => {
+    dispatch(updateQuantity({ name: item.name, delta: 1 }));
   };
 
   const handleDecrement = (item) => {
-   
+    dispatch(updateQuantity({ name: item.name, delta: -1 }));
   };
 
   const handleRemove = (item) => {
+    dispatch(removeItem(item.name));
   };
 
   // Calculate total cost based on quantity for an item
   const calculateTotalCost = (item) => {
+    const unit = parseFloat(String(item.cost).replace(/[^0-9.]/g, '')) || 0;
+    return (unit * (item.quantity || 0)).toFixed(2);
   };
 
   return (

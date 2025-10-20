@@ -26,10 +26,26 @@ export const CartSlice = createSlice({
     }
     },
     removeItem: (state, action) => {
+      const payload = action.payload;
+      const name = typeof payload === 'string' ? payload : payload?.name;
+      if (!name) return;
+      state.items = state.items.filter(item => item.name !== name);
     },
     updateQuantity: (state, action) => {
-
-    
+      const { name, delta, quantity } = action.payload || {};
+      if (!name) return;
+      const target = state.items.find(item => item.name === name);
+      if (!target) return;
+      if (typeof quantity === 'number') {
+        target.quantity = quantity;
+      } else if (typeof delta === 'number') {
+        target.quantity += delta;
+      } else {
+        return;
+      }
+      if (target.quantity <= 0) {
+        state.items = state.items.filter(item => item.name !== name);
+      }
     },
   },
 });
